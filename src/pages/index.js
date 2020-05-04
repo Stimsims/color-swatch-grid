@@ -66,6 +66,7 @@ const IndexPage = () => {
   const [pagePadding, setPagePadding] = useState(10);
   const [columnCount, setColumnCount] = useState(3);
   const [rowCount, setRowCount] = useState(3);
+  const [showTools, setShowTools] = useState(false);
   
   const setDimensions = (id) => {
     if(id === KA3){
@@ -97,45 +98,56 @@ const IndexPage = () => {
   }
   console.log(`grid width ${width} height ${height} columnGap ${columnGap} rowGap ${rowGap} unit ${unit}`);
   return <Wrapper>
-    <Tools>
-    <h1 className="title">Swatch Grid Creator</h1>
-    <div className="select-unit">
-    <Select options={units} text="Select a base unit" value={unit} onChange={handleUnitChange} />
-    </div>
-    <p>Set page size</p>
-    <div className="buttons">
-        <Button id={KA3} text="A3" onClick={setDimensions}/>
-        <Button id={KA4} text="A4" onClick={setDimensions}/>
-        <Button id={KA5} text="A5" onClick={setDimensions}/>
-      </div>
-    <Slider id="width" text="page width" recieveChange={setWidth} 
-      step={0.1} min={0} max={convertUnit(RANGE[0], MM, unit)} value={width} />
-    <Slider id="height" text="page height" recieveChange={setHeight} 
-      step={0.1} min={0} max={convertUnit(RANGE[1], MM, unit)} value={height} />
-    <Slider id="pagePadding" text="page padding" recieveChange={setPagePadding} 
-      step={1} min={1} max={20} value={pagePadding} />
 
-    <Slider id="colCount" text="number of columns" recieveChange={setColumnCount} 
-      step={1} min={1} max={10} value={columnCount} />
-    <Slider id="rowCount" text="number of rows" recieveChange={setRowCount} 
-      step={1} min={1} max={10} value={rowCount} />
-      <Slider id="columnGap" text="column gap" recieveChange={setColumnGap} 
-      step={0.1} min={0} max={convertUnit(GAP_RANGE[0], MM, unit)} value={columnGap} />
-    <Slider id="rowGap" text="row gap" recieveChange={setRowGap} 
-      step={0.1} min={0} max={convertUnit(GAP_RANGE[1], MM, unit)} value={rowGap} />
-    </Tools>
     <Grid width={width} height={height} columnGap={columnGap} rowGap={rowGap} unit={unit}
         rowCount={rowCount} columnCount={columnCount} pagePadding={pagePadding}>
           {renderGridItems(columnCount, rowCount)}
-        {/* <div className="item item-a" />
-        <div className="item item-b" />
-        <div className="item item-c" />
-        <div className="item item-d" /> */}
     </Grid>
+    <Toggle>
+      <Button onClick={()=>{setShowTools(!showTools)}} text={showTools?'show tools':'hide tools'} />
+    </Toggle>
+    <Tools className={`${showTools?'showTools':'hideTools'}`}>
+      <h1 className="title">Swatch Grid Creator</h1>
+      <p>This tool will print a page out with the specified grid parameters. It is recommended to use either A3, A4 or A5 page dimensions.</p>
+      <div className="select-unit">
+      <Select options={units} text="Select a base unit" value={unit} onChange={handleUnitChange} />
+      </div>
+      <p>Set page size</p>
+      <div className="buttons">
+          <Button id={KA3} text="A3" onClick={setDimensions}/>
+          <Button id={KA4} text="A4" onClick={setDimensions}/>
+          <Button id={KA5} text="A5" onClick={setDimensions}/>
+        </div>
+      <Slider id="width" text="page width" recieveChange={setWidth} 
+        step={0.1} min={0} max={convertUnit(RANGE[0], MM, unit)} value={width} />
+      <Slider id="height" text="page height" recieveChange={setHeight} 
+        step={0.1} min={0} max={convertUnit(RANGE[1], MM, unit)} value={height} />
+      <Slider id="pagePadding" text="page padding" recieveChange={setPagePadding} 
+        step={1} min={1} max={20} value={pagePadding} />
+
+      <Slider id="colCount" text="number of columns" recieveChange={setColumnCount} 
+        step={1} min={1} max={10} value={columnCount} />
+      <Slider id="rowCount" text="number of rows" recieveChange={setRowCount} 
+        step={1} min={1} max={10} value={rowCount} />
+        <Slider id="columnGap" text="column gap" recieveChange={setColumnGap} 
+        step={0.1} min={0} max={convertUnit(GAP_RANGE[0], MM, unit)} value={columnGap} />
+      <Slider id="rowGap" text="row gap" recieveChange={setRowGap} 
+        step={0.1} min={0} max={convertUnit(GAP_RANGE[1], MM, unit)} value={rowGap} />
+    </Tools>
   </Wrapper>
 }
 
 export default IndexPage;
+
+const Toggle = styled.div`
+  position: absolute;
+  z-index:10;
+  top:10px;
+  left:10px;
+  @media print {
+    display: none;
+  }
+`
 
 const getGridFraction = (n) => {
   let r ='';
@@ -180,11 +192,15 @@ const Wrapper = styled.div`
 
 `
 const Tools = styled.div`
+
   background-color: #F1BDF2;
   color: black;
   width: 300px;
   position: absolute;
   padding: 10px;
+  padding-top: 50px;
+  max-height: 100%;
+  overflow: auto;
   top:0px;
   left: 0px;
   text-align:center;
@@ -198,6 +214,13 @@ const Tools = styled.div`
   .buttons{
     text-align: center;
   }
+  transition: transform 0.5s ease;
+  &.showTools{
+    transform: translate(0%, 0%);
+  }
+  &.hideTools{
+    transform: translate(-100%, 0%);
+  }
   @media print {
     display: none;
   }
@@ -206,7 +229,11 @@ const Tools = styled.div`
 const Grid = styled.div`
   margin: auto;
   background-color: white;
-  transform-origin: 50% 0%;
+  transform-origin: 0% 0%;
+  transform: scale(0.5);
+  @media (min-width: 500px){
+    transform: scale(1);
+  }
   width: ${props => {
     return `${props.width}${props.unit};`
   }};
