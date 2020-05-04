@@ -5,9 +5,9 @@ export const Item = styled.button`
     outline: none;
     box-sizing: border-box;
     left: 0px; top: 0px;
-    background-color: red;
+    background-color: #F263CC;
     border-radius: 5px;
-    color:  white;
+    color:  black;
     min-width: 50px;
     margin: 10px;
     transition: opacity 0.3 ease, background-color 0.1s ease;

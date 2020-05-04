@@ -10,7 +10,7 @@ const Select = (props) => {
     }
     return <label>
     {props.text && <p style={{margin: '0'}}>{props.text}</p>}
-    <select value={props.value} onChange={handleChange}>
+    <select value={props.value} onChange={handleChange} style={{fontSize: '1.2em'}}>
         {props.options && props.options.map((o, i) => {
             return <option key={o.key} value={o.key}>{o.text}</option>
         })}

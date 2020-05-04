@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Select from '../components/Select/index';
 import Slider from '../components/Slider/index';
 import Button from '../components/Button/v1/Button';
+import './../components/styles.css';
 /*
   A3: 297mm X 420mm
   A4: 210mm X 297mm
@@ -17,7 +18,7 @@ const A3 = [297, 420];
 const A4 = [210, 297];
 const A5 = [148, 210];
 const RANGE = [500, 800];
-const GAP_RANGE = [20, 20];
+const GAP_RANGE = [10, 10];
 
 const convertUnit = (n, u1, u2) => {
   if(u1 === u2) return n;
@@ -62,6 +63,7 @@ const IndexPage = () => {
   const [height, setHeight] = useState(convertUnit(A4[1], MM, unit));
   const [columnGap, setColumnGap] = useState(3);
   const [rowGap, setRowGap] = useState(3);
+  const [pagePadding, setPagePadding] = useState(10);
   const [columnCount, setColumnCount] = useState(3);
   const [rowCount, setRowCount] = useState(3);
   
@@ -82,6 +84,7 @@ const IndexPage = () => {
     setHeight(convertUnit(height, unit, nUnit));
     setColumnGap(convertUnit(columnGap, unit, nUnit));
     setRowGap(convertUnit(rowGap, unit, nUnit));
+    setPagePadding(convertUnit(pagePadding, unit, nUnit));
     setUnit(nUnit);
   }
   const renderGridItems = (column, row) => {
@@ -99,26 +102,30 @@ const IndexPage = () => {
     <div className="select-unit">
     <Select options={units} text="Select a base unit" value={unit} onChange={handleUnitChange} />
     </div>
+    <p>Set page size</p>
     <div className="buttons">
         <Button id={KA3} text="A3" onClick={setDimensions}/>
         <Button id={KA4} text="A4" onClick={setDimensions}/>
         <Button id={KA5} text="A5" onClick={setDimensions}/>
       </div>
-    <Slider id="width" text="select page width" recieveChange={setWidth} 
+    <Slider id="width" text="page width" recieveChange={setWidth} 
       step={0.1} min={0} max={convertUnit(RANGE[0], MM, unit)} value={width} />
-    <Slider id="height" text="select page height" recieveChange={setHeight} 
+    <Slider id="height" text="page height" recieveChange={setHeight} 
       step={0.1} min={0} max={convertUnit(RANGE[1], MM, unit)} value={height} />
-      <Slider id="columnGap" text="select column gap" recieveChange={setColumnGap} 
-      step={0.1} min={0} max={convertUnit(GAP_RANGE[0], MM, unit)} value={columnGap} />
-    <Slider id="rowGap" text="select row gap" recieveChange={setRowGap} 
-      step={0.1} min={0} max={convertUnit(GAP_RANGE[1], MM, unit)} value={rowGap} />
+    <Slider id="pagePadding" text="page padding" recieveChange={setPagePadding} 
+      step={1} min={1} max={20} value={pagePadding} />
+
     <Slider id="colCount" text="number of columns" recieveChange={setColumnCount} 
       step={1} min={1} max={10} value={columnCount} />
     <Slider id="rowCount" text="number of rows" recieveChange={setRowCount} 
       step={1} min={1} max={10} value={rowCount} />
+      <Slider id="columnGap" text="column gap" recieveChange={setColumnGap} 
+      step={0.1} min={0} max={convertUnit(GAP_RANGE[0], MM, unit)} value={columnGap} />
+    <Slider id="rowGap" text="row gap" recieveChange={setRowGap} 
+      step={0.1} min={0} max={convertUnit(GAP_RANGE[1], MM, unit)} value={rowGap} />
     </Tools>
     <Grid width={width} height={height} columnGap={columnGap} rowGap={rowGap} unit={unit}
-        rowCount={rowCount} columnCount={columnCount}>
+        rowCount={rowCount} columnCount={columnCount} pagePadding={pagePadding}>
           {renderGridItems(columnCount, rowCount)}
         {/* <div className="item item-a" />
         <div className="item item-b" />
@@ -168,12 +175,13 @@ const getGridItems = (columns, rows) => {
 const Wrapper = styled.div`
   position: fixed;
   top:0px;left:0px;right:0px;bottom:0px;
-  background-color: grey;
+  background-color: #712473;
   overflow: auto;
 
 `
 const Tools = styled.div`
-  background-color: pink;
+  background-color: #F1BDF2;
+  color: black;
   width: 300px;
   position: absolute;
   padding: 10px;
@@ -190,20 +198,24 @@ const Tools = styled.div`
   .buttons{
     text-align: center;
   }
+  @media print {
+    display: none;
+  }
 `
 
 const Grid = styled.div`
   margin: auto;
   background-color: white;
+  transform-origin: 50% 0%;
   width: ${props => {
     return `${props.width}${props.unit};`
   }};
   height: ${props => {
     return `${props.height}${props.unit};`
   }};
- 
+
   padding: ${props => {
-    return `${props.rowGap}${props.unit} ${props.columnGap}${props.unit};`
+    return `${props.pagePadding}${props.unit};`
   }};
 
   display: grid;
@@ -225,7 +237,19 @@ const Grid = styled.div`
     border: 2px solid cyan;
   }
   ${props => getGridItems(props.columnCount, props.rowCount)}
-
+  box-sizing: border-box;
+  @media print {
+    width: 100%;
+    height:100%;
+    position:absolute;
+    top:0px;
+    bottom:0px;
+    margin: auto;
+    margin-top: 0px !important;
+    border: 1px solid;
+    overflow: hidden;
+    transform: scale(1);
+  }
 `
 /*
   grid-template-rows: ${props => {

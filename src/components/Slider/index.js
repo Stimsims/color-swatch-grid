@@ -15,7 +15,7 @@ const railStyle = {
   height: 10,
   marginTop: 35,
   borderRadius: 5,
-  backgroundColor: '#8B9CB6',
+  backgroundColor: '#91CCD9',
 }
 
 export function Handle({
@@ -136,6 +136,13 @@ const SliderWrapper = styled.div`
     .slider-label{
         margin:0px 10px;
         box-sizing: border-box;
+    }
+    .slider-handles{
+        background-color: red;
+        color: white;
+    }
+    .slider-tracks div{
+        background-color: #48B0D9;
     }
 
 `

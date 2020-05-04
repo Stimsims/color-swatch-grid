@@ -1,0 +1,14 @@
+
+@page {
+    size: auto;   /* auto is the initial value */
+    margin: 0;  /* this affects the margin in the printer settings */
+}
+@media print {
+    html, body {
+        height: 99%;
+        margin: 0; 
+        padding:0;
+        box-sizing: border-box;
+    }
+    
+}
