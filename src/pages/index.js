@@ -188,18 +188,19 @@ const Wrapper = styled.div`
   position: fixed;
   top:0px;left:0px;right:0px;bottom:0px;
   background-color: #712473;
-  overflow: auto;
-
+  overflow: hidden;
+  max-width:100vw;
+  max-height:100vh;
 `
 const Tools = styled.div`
-
   background-color: #F1BDF2;
   color: black;
-  width: 300px;
+  width: 250px;
   position: absolute;
   padding: 10px;
   padding-top: 50px;
-  max-height: 100%;
+  box-sizing: border-box;
+  max-height: 100vh;
   overflow: auto;
   top:0px;
   left: 0px;
@@ -216,10 +217,10 @@ const Tools = styled.div`
   }
   transition: transform 0.5s ease;
   &.showTools{
-    transform: translate(0%, 0%);
+    transform: translate(0%, 0%) scale(1);
   }
   &.hideTools{
-    transform: translate(-100%, 0%);
+    transform: translate(-100%, 0%) scale(1);
   }
   @media print {
     display: none;
@@ -234,6 +235,7 @@ const Grid = styled.div`
   @media (min-width: 500px){
     transform: scale(1);
   }
+  overflow: hidden;
   width: ${props => {
     return `${props.width}${props.unit};`
   }};
@@ -274,7 +276,7 @@ const Grid = styled.div`
     margin: auto;
     margin-top: 0px !important;
     border: 1px solid;
-    overflow: hidden;
+ 
     transform: scale(1);
   }
 `
