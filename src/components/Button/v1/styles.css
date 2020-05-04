@@ -1,0 +1,22 @@
+@-webkit-keyframes glowB {
+    0% {
+      opacity: 0.98;
+      transform:scale(0.99);
+    }
+    20% {
+       opacity: 0.95;
+       transform:scale(1);
+    }
+    40% {
+        opacity: 1.0;
+        transform: scale(1.01);
+     }
+     60% {
+        opacity: 0.92;
+        transform: scale(0.98);
+     }
+     80% {
+        opacity: 0.95;
+        transform: scale(1.02);
+     }
+  }
