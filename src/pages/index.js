@@ -123,7 +123,7 @@ const IndexPage = () => {
       <Slider id="height" text="page height" recieveChange={setHeight} 
         step={0.1} min={0} max={convertUnit(RANGE[1], MM, unit)} value={height} />
       <Slider id="pagePadding" text="page padding" recieveChange={setPagePadding} 
-        step={1} min={1} max={20} value={pagePadding} />
+        step={1} min={1} max={convertUnit(GAP_RANGE[1], MM, unit)} value={pagePadding} />
 
       <Slider id="colCount" text="number of columns" recieveChange={setColumnCount} 
         step={1} min={1} max={10} value={columnCount} />
