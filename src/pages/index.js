@@ -73,6 +73,7 @@ const IndexPage = () => {
     sendPageView(globalHistory.location.origin + globalHistory.location.pathname);
   }, [])
   const setDimensions = (id) => {
+    sendEvent('feature', 'setDimensions', id);
     if(id === KA3){
       setWidth(convertUnit(A3[0], MM, unit))
       setHeight(convertUnit(A3[1], MM, unit))
