@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 const Select = (props) => {
   //  const [value, setValue] = useState(props.value || props.options[0].key);
@@ -10,11 +11,11 @@ const Select = (props) => {
     }
     return <label>
     {props.text && <p style={{margin: '0'}}>{props.text}</p>}
-    <select value={props.value} onChange={handleChange} style={{fontSize: '1.2em'}}>
+    <SelectView value={props.value} onChange={handleChange} >
         {props.options && props.options.map((o, i) => {
             return <option key={o.key} value={o.key}>{o.text}</option>
         })}
-    </select>
+    </SelectView>
 </label>
 }
 
@@ -27,3 +28,8 @@ Select.propTypes = {
 }
 
 export default Select;
+
+const SelectView = styled.select`
+    font-size: 1.2em;
+    outline: 3px solid ${props => props.theme.primary};
+`

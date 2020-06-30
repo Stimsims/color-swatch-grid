@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, {ThemeProvider} from 'styled-components';
 import Select from '../components/Select/index';
 import Slider from '../components/Slider/index';
 import Button from '../components/Button/v1/Button';
+import IconButton from '../components/IconButton/index';
 import './../components/styles.css';
+import {theme} from './../components/theme';
+import ToastTool from './../components/ToastTool/index';
 /*
   A3: 297mm X 420mm
   A4: 210mm X 297mm
@@ -18,55 +21,49 @@ const A3 = [297, 420];
 const A4 = [210, 297];
 const A5 = [148, 210];
 const RANGE = [500, 800];
-const GAP_RANGE = [10, 10];
+const GAP_RANGE = [0, 10];
+
+export function roundTo(value, decimals) {
+  return Number(Math.round(value+'e'+decimals)+'e-'+decimals) || Math.round(value);
+}
 
 const convertUnit = (n, u1, u2) => {
-  if(u1 === u2) return n;
+
+  let v;
+  if(u1 === u2) v = n;
   if(u1 === MM){
     if(u2 === CM){
-      return n*0.1;
+      v = n*0.1;
     }else if(u2 === INCH){
-      return n*0.0393701;
+      v = n*0.0393701;
     }
   }else if(u1 === CM){
     if(u2 === MM){
-      return n*10;
+      v = n*10;
     }else if(u2 === INCH){
-      return n*0.393701;
+      v = n*0.393701;
     }
   }else if(u1 === INCH){
     if(u2 === MM){
-      return n*25.4;
+      v =  n*25.4;
     }else if(u2 === CM){
-      return n*2.54;
+      v = n*2.54;
     }
   }
-  throw Error(`unknown unit 1 ${u1} or 2 ${u2}`);
+  return roundTo(v, 1);
 }
-const testConvertUnit = () => {
-  console.log(`test convert 0.5cm to cm ${convertUnit(0.5, CM, CM)}`);
-  //5mm -> 0.19685 inch
-  console.log(`test convert 5mm to 0.19685inches ${convertUnit(5, MM, INCH)}`);
-    //5mm -> 0.5 CM
-    console.log(`test convert 5mm to 0.5cm ${convertUnit(5, MM, CM)}`);
-  //0.5 CM -> 0.5mm
-  console.log(`test convert 0.5cm to 5mm ${convertUnit(0.5, CM, MM)}`);
-  //5cm -> 1.9685inch
-  console.log(`test convert 5cm to 1.9685inch ${convertUnit(5, CM, INCH)}`);
-  //1.9685inch -> 5cm
-  console.log(`test convert 1.9685inch to 5cm ${convertUnit(1.9685, INCH, CM)}`);
-}
-testConvertUnit();
+
 const IndexPage = () => {
   const [unit, setUnit] = useState(units[0].key);
   const [width, setWidth] = useState(convertUnit(A4[0], MM, unit));
   const [height, setHeight] = useState(convertUnit(A4[1], MM, unit));
   const [columnGap, setColumnGap] = useState(3);
   const [rowGap, setRowGap] = useState(3);
-  const [pagePadding, setPagePadding] = useState(10);
+  const [pagePadding, setPagePadding] = useState((GAP_RANGE[1]-GAP_RANGE[0])/2);
   const [columnCount, setColumnCount] = useState(3);
   const [rowCount, setRowCount] = useState(3);
   const [showTools, setShowTools] = useState(false);
+  const [toast, setToast] = useState({id: null, text: null});
   
   const setDimensions = (id) => {
     if(id === KA3){
@@ -96,16 +93,31 @@ const IndexPage = () => {
     }
     return views;
   }
-  console.log(`grid width ${width} height ${height} columnGap ${columnGap} rowGap ${rowGap} unit ${unit}`);
-  return <Wrapper>
+  const handlePrint = (id, v) => {
+    if(window && window.print){
+      window.print();
+    }else{
+      setToast({id: `${Math.random()}`, text: 'The print feature was not found in this browser'})
+    }
+   
+  }
+  return <ThemeProvider theme={theme}>
+    <Wrapper>
 
     <Grid width={width} height={height} columnGap={columnGap} rowGap={rowGap} unit={unit}
         rowCount={rowCount} columnCount={columnCount} pagePadding={pagePadding}>
           {renderGridItems(columnCount, rowCount)}
     </Grid>
     <Toggle>
-      <Button onClick={()=>{setShowTools(!showTools)}} text={showTools?'show tools':'hide tools'} />
+      {/* <Button onClick={()=>{setShowTools(!showTools)}} text={showTools?'show tools':'hide tools'} /> */}
+      <IconButton icon="icon-circle-right" fontSize="3" color="primary" 
+        rotate={showTools?'180':''}
+        onInput={()=>{setShowTools(!showTools)}}
+      />
     </Toggle>
+    <Print>
+      <IconButton icon="icon-printer" fontSize="3" color="primary" onInput={handlePrint} />
+    </Print>
     <Tools className={`${showTools?'showTools':'hideTools'}`}>
       <h1 className="title">Swatch Grid Creator</h1>
       <p>This tool will print a page out with the specified grid parameters. It is recommended to use either A3, A4 or A5 page dimensions.</p>
@@ -123,7 +135,8 @@ const IndexPage = () => {
       <Slider id="height" text="page height" recieveChange={setHeight} 
         step={0.1} min={0} max={convertUnit(RANGE[1], MM, unit)} value={height} />
       <Slider id="pagePadding" text="page padding" recieveChange={setPagePadding} 
-        step={1} min={1} max={convertUnit(GAP_RANGE[1], MM, unit)} value={pagePadding} />
+        step={0.1} min={Math.floor(convertUnit(GAP_RANGE[0], MM, unit))} 
+          max={Math.ceil(convertUnit(GAP_RANGE[1], MM, unit))} value={pagePadding} />
 
       <Slider id="colCount" text="number of columns" recieveChange={setColumnCount} 
         step={1} min={1} max={10} value={columnCount} />
@@ -134,20 +147,13 @@ const IndexPage = () => {
       <Slider id="rowGap" text="row gap" recieveChange={setRowGap} 
         step={0.1} min={0} max={convertUnit(GAP_RANGE[1], MM, unit)} value={rowGap} />
     </Tools>
+    <ToastTool {...toast} />
   </Wrapper>
+  </ThemeProvider>
 }
 
 export default IndexPage;
 
-const Toggle = styled.div`
-  position: absolute;
-  z-index:10;
-  top:10px;
-  left:10px;
-  @media print {
-    display: none;
-  }
-`
 
 const getGridFraction = (n) => {
   let r ='';
@@ -157,12 +163,7 @@ const getGridFraction = (n) => {
     console.log(`getGridFraction n ${n} r ${r}`);
     return r;
 }
-const colors = ['red', 'green', 'blue', 'purple', 'black', 'grey', 'yellow', 'pink', 'magenta', 'cyan', 'coral']
-const getColor = (index) => {
-  console.log(`getColor index ${index} colors ${colors.length} remainder ${(index)%colors.length} 
-  color ${colors[(index)%colors.length]}`);
-  return colors[(index)%colors.length];
-}
+
 const getGridItems = (columns, rows) => {
  let str = '', counter = 0;
  for(let r = 1; r<=rows; r++){
@@ -184,23 +185,44 @@ const getGridItems = (columns, rows) => {
  return str;
 }
 
+const Toggle = styled.div`
+  position: fixed;
+  z-index:10;
+  top:10px;
+  left:10px;
+  @media print {
+    display: none;
+  }
+`
+const Print = styled.div`
+  position: fixed;
+  z-index:10;
+  top:10px;
+  left:60px;
+  @media print {
+    display: none;
+  }
+`
 const Wrapper = styled.div`
   position: fixed;
   top:0px;left:0px;right:0px;bottom:0px;
-  background-color: #712473;
-  overflow: hidden;
-  max-width:100vw;
-  max-height:100vh;
+  background-color: ${props => props.theme.tertiary};
+  overflow-y: hidden;
+  overflow-x: auto;
+  max-width:100%;
+  max-height:100%;
+
+
 `
 const Tools = styled.div`
-  background-color: #F1BDF2;
-  color: black;
-  width: 250px;
-  position: absolute;
+  background-color: ${props => props.theme.highlight};
+  color: ${props => props.theme.text};
+  width: 280px;
+  position: fixed;
   padding: 10px;
   padding-top: 50px;
   box-sizing: border-box;
-  max-height: 100vh;
+  max-height: 100%;
   overflow: auto;
   top:0px;
   left: 0px;
@@ -210,7 +232,7 @@ const Tools = styled.div`
   }
   .select-unit{
     padding-bottom:10px;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid ${props => props.theme.text};
   }
   .buttons{
     text-align: center;
@@ -224,6 +246,17 @@ const Tools = styled.div`
   }
   @media print {
     display: none;
+  }
+  ::-webkit-scrollbar {
+      height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+      background-color: ${props => props.theme.highlight};
+      
+  }
+  ::-webkit-scrollbar-thumb {
+      background-color: ${props => props.theme.neutral};
+      border-radius: 10px;
   }
 `
 
@@ -280,36 +313,3 @@ const Grid = styled.div`
     transform: scale(1);
   }
 `
-/*
-  grid-template-rows: ${props => {
-    return getGridFraction(props.rowCount);
-  }};
-  .item-a{
-    grid-column-start: 1;
-    grid-column-end: 1;
-    grid-row-start: 1;
-    grid-row-end: 1;
-    background-color: pink;
-  }
-  .item-b{
-    grid-column-start: 2;
-    grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 1;
-    background-color: purple;
-  }
-  .item-c{
-    grid-column-start: 1;
-    grid-column-end: 1;
-    grid-row-start: 2;
-    grid-row-end: 2;
-    background-color: red;
-  }
-  .item-d{
-    grid-column-start: 3;
-    grid-column-end: 3;
-    grid-row-start: 2;
-    grid-row-end: 2;
-    background-color: cyan;
-  }
-*/

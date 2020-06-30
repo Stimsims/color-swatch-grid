@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&family=Source+Code+Pro:wght@500&display=swap');
+
 @page {
     size: auto;   /* auto is the initial value */
     margin: 0;  /* this affects the margin in the printer settings */
@@ -11,4 +13,11 @@
         box-sizing: border-box;
     }
     
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-family: 'Source Code Pro', monospace;
+}
+p, a{
+    font-family: 'Nunito', sans-serif;
 }

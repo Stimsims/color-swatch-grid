@@ -15,7 +15,7 @@ const railStyle = {
   height: 10,
   marginTop: 35,
   borderRadius: 5,
-  backgroundColor: '#91CCD9',
+  backgroundColor: '#A7B8C0',
 }
 
 export function Handle({
@@ -36,7 +36,7 @@ export function Handle({
           textAlign: 'center',
           cursor: 'pointer',
           borderRadius: '50%',
-          backgroundColor: '#2C4870',
+          backgroundColor: '#C11227',
           color: '#333',
         }}
         {...getHandleProps(id)}
@@ -56,7 +56,7 @@ export function Handle({
           height: 10,
           zIndex: 1,
           marginTop: 35,
-          backgroundColor: '#546C91',
+          backgroundColor: '#334C73',
           borderRadius: 5,
           cursor: 'pointer',
           left: `${source.percent}%`,

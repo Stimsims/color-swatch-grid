@@ -5,9 +5,11 @@ export const Item = styled.button`
     outline: none;
     box-sizing: border-box;
     left: 0px; top: 0px;
-    background-color: #F263CC;
+    background-color: ${props => props.theme.primary};
     border-radius: 5px;
-    color:  black;
+    color:  white;
+    font-size:1.5em;
+    font-weight:bold;
     min-width: 50px;
     margin: 10px;
     transition: opacity 0.3 ease, background-color 0.1s ease;
@@ -16,9 +18,11 @@ export const Item = styled.button`
         opacity: 1;
     }
     &:active{
-        background-color: blue;
+        background-color: ${props => props.theme.primaryLight};
     }
-
+    p{
+        margin: 5px;
+    }
 `
 /*
 
