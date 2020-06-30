@@ -7,8 +7,8 @@ const Cookie = (props) => {
         location="bottom"
         buttonText="Okay"
         cookieName="cookieMedallion"
-        style={{ background: "#A7B8C0", opacity: 0, transform: 'translateY(50%)', animation: 'fadeInCookie 1s ease forwards' }}
-        buttonStyle={{ color: "#A7B8C0", backgroundColor: '#334C73', fontSize: "13px" }}
+        style={{ background: "#D8DADB", borderTop: '2px solid #334C73', opacity: 0, transform: 'translateY(50%)', animation: 'fadeInCookie 1s ease forwards' }}
+        buttonStyle={{ color: "#D8DADB", backgroundColor: '#334C73', fontSize: "13px" }}
         expires={150}
     >
         <p className="cookieConsent" style={{color: '#334C73'}}>This website uses cookies to improve your experience.</p>
