@@ -11,7 +11,7 @@ const Cookie = (props) => {
         buttonStyle={{ color: "#D8DADB", backgroundColor: '#334C73', fontSize: "13px" }}
         expires={150}
     >
-        <p className="cookieConsent" style={{color: '#334C73'}}>This website uses cookies to improve your experience.</p>
+        <p className="cookieConsent" style={{color: 'black'}}>This website uses cookies to improve your experience.</p>
     </CookieConsent>
 }
 
