@@ -5,8 +5,6 @@ import styled from 'styled-components';
 const Select = (props) => {
   //  const [value, setValue] = useState(props.value || props.options[0].key);
     const handleChange = (ev) => {
-        console.log(`Select handleChange value ${ev.target.value}`,ev);
-        //setValue(ev.target.value)
         props.onChange(ev.target.value);
     }
     return <label>

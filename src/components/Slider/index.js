@@ -69,7 +69,6 @@ export function Handle({
 
 const SliderView = (props) => {
     const handleChange=(value) => {
-        console.log(`Slider onChange props.value ${props.value} value`, value);
         props.recieveChange(roundTo(value[0], 2));
     }
     return  <SliderWrapper key={props.id}>

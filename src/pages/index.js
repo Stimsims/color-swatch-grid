@@ -160,7 +160,6 @@ const getGridFraction = (n) => {
     for(let i = 0; i<n; i++){
       r += `1fr `;
     }
-    console.log(`getGridFraction n ${n} r ${r}`);
     return r;
 }
 
@@ -181,7 +180,6 @@ const getGridItems = (columns, rows) => {
     }
   }
 
- console.log(`getGridItems columns ${columns} rows ${rows} return ${str}`);
  return str;
 }
 
