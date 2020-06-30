@@ -4,9 +4,12 @@ import Select from '../components/Select/index';
 import Slider from '../components/Slider/index';
 import Button from '../components/Button/v1/Button';
 import IconButton from '../components/IconButton/index';
+import CookieModal from './../components/CookieModal/CookieModal';
 import './../components/styles.css';
 import {theme} from './../components/theme';
 import ToastTool from './../components/ToastTool/index';
+import {sendEvent, sendPageView} from './../utilities/measure';
+import { globalHistory } from "@reach/router";
 /*
   A3: 297mm X 420mm
   A4: 210mm X 297mm
@@ -21,6 +24,7 @@ const A3 = [297, 420];
 const A4 = [210, 297];
 const A5 = [148, 210];
 const RANGE = [500, 800];
+const PADDING_RANGE = [0, 20];
 const GAP_RANGE = [0, 10];
 
 export function roundTo(value, decimals) {
@@ -59,12 +63,15 @@ const IndexPage = () => {
   const [height, setHeight] = useState(convertUnit(A4[1], MM, unit));
   const [columnGap, setColumnGap] = useState(3);
   const [rowGap, setRowGap] = useState(3);
-  const [pagePadding, setPagePadding] = useState((GAP_RANGE[1]-GAP_RANGE[0])/2);
+  const [pagePadding, setPagePadding] = useState((PADDING_RANGE[1]-PADDING_RANGE[0])/2);
   const [columnCount, setColumnCount] = useState(3);
   const [rowCount, setRowCount] = useState(3);
   const [showTools, setShowTools] = useState(false);
   const [toast, setToast] = useState({id: null, text: null});
-  
+  useEffect(()=>{
+    console.log(`pageview ${globalHistory.location.origin + globalHistory.location.pathname}`);
+    sendPageView(globalHistory.location.origin + globalHistory.location.pathname);
+  }, [])
   const setDimensions = (id) => {
     if(id === KA3){
       setWidth(convertUnit(A3[0], MM, unit))
@@ -78,6 +85,7 @@ const IndexPage = () => {
     }
   }
   const handleUnitChange = (nUnit) => {
+    sendEvent('feature', 'unit-change', nUnit);
     setWidth(convertUnit(width, unit, nUnit));
     setHeight(convertUnit(height, unit, nUnit));
     setColumnGap(convertUnit(columnGap, unit, nUnit));
@@ -89,17 +97,19 @@ const IndexPage = () => {
     let total = column*row;
     let views = [];
     for(let i = 0; i<total; i++){
-      views.push(<div className={`item item-${i}`} />)
+      views.push(<div key={i} id={i} className={`item item-${i}`} />)
     }
     return views;
   }
   const handlePrint = (id, v) => {
     if(window && window.print){
+      sendEvent('feature', 'print', 'available');
       window.print();
+      
     }else{
-      setToast({id: `${Math.random()}`, text: 'The print feature was not found in this browser'})
+      sendEvent('feature', 'print', 'unavailable');
+      setToast({id: `${Math.random()}`, text: 'The print feature was not found in this browser'});
     }
-   
   }
   return <ThemeProvider theme={theme}>
     <Wrapper>
@@ -112,7 +122,10 @@ const IndexPage = () => {
       {/* <Button onClick={()=>{setShowTools(!showTools)}} text={showTools?'show tools':'hide tools'} /> */}
       <IconButton icon="icon-circle-right" fontSize="3" color="primary" 
         rotate={showTools?'180':''}
-        onInput={()=>{setShowTools(!showTools)}}
+        onInput={()=>{
+          sendEvent('feature', 'menu', showTools?'closed':'opened');
+          setShowTools(!showTools);
+        }}
       />
     </Toggle>
     <Print className="slideDown delay-1">
@@ -135,19 +148,20 @@ const IndexPage = () => {
       <Slider id="height" text="page height" recieveChange={setHeight} 
         step={0.1} min={0} max={convertUnit(RANGE[1], MM, unit)} value={height} />
       <Slider id="pagePadding" text="page padding" recieveChange={setPagePadding} 
-        step={0.1} min={Math.floor(convertUnit(GAP_RANGE[0], MM, unit))} 
-          max={Math.ceil(convertUnit(GAP_RANGE[1], MM, unit))} value={pagePadding} />
+        step={0.1} min={Math.floor(convertUnit(PADDING_RANGE[0], MM, unit))} 
+          max={Math.ceil(convertUnit(PADDING_RANGE[1], MM, unit))} value={pagePadding} />
 
       <Slider id="colCount" text="number of columns" recieveChange={setColumnCount} 
         step={1} min={1} max={10} value={columnCount} />
       <Slider id="rowCount" text="number of rows" recieveChange={setRowCount} 
         step={1} min={1} max={10} value={rowCount} />
         <Slider id="columnGap" text="column gap" recieveChange={setColumnGap} 
-        step={0.1} min={0} max={convertUnit(GAP_RANGE[0], MM, unit)} value={columnGap} />
+        step={0.1} min={0} max={convertUnit(GAP_RANGE[1], MM, unit)} value={columnGap} />
       <Slider id="rowGap" text="row gap" recieveChange={setRowGap} 
         step={0.1} min={0} max={convertUnit(GAP_RANGE[1], MM, unit)} value={rowGap} />
     </Tools>
     <ToastTool {...toast} />
+    <CookieModal />
   </Wrapper>
   </ThemeProvider>
 }

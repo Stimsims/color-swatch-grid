@@ -1,0 +1,15 @@
+.cookieConsent{
+    width: 80%;
+}
+
+@media only screen and (min-width: 350px) {
+    .cookieConsent{
+        width: auto;
+    }
+}
+
+@keyframes fadeInCookie{
+    from{opacity: 0; transform: translateY(50%)}
+    to{opacity:1; transform: translateY(0%)}
+}
+
