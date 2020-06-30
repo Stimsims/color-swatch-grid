@@ -21,3 +21,25 @@ h1, h2, h3, h4, h5, h6{
 p, a{
     font-family: 'Nunito', sans-serif;
 }
+
+.slideDown{
+    opacity: 0;
+    transform: translateY(-200%);
+    animation: slideDown 0.5s ease forwards;
+}
+.delay-0{
+    animation-delay: 0.3s;
+}
+.delay-1{
+    animation-delay: 0.6s;
+}
+@keyframes slideDown{
+    from {
+        opacity: 0;
+        transform: translateY(-200%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}

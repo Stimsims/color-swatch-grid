@@ -108,14 +108,14 @@ const IndexPage = () => {
         rowCount={rowCount} columnCount={columnCount} pagePadding={pagePadding}>
           {renderGridItems(columnCount, rowCount)}
     </Grid>
-    <Toggle>
+    <Toggle className="slideDown delay-0">
       {/* <Button onClick={()=>{setShowTools(!showTools)}} text={showTools?'show tools':'hide tools'} /> */}
       <IconButton icon="icon-circle-right" fontSize="3" color="primary" 
         rotate={showTools?'180':''}
         onInput={()=>{setShowTools(!showTools)}}
       />
     </Toggle>
-    <Print>
+    <Print className="slideDown delay-1">
       <IconButton icon="icon-printer" fontSize="3" color="primary" onInput={handlePrint} />
     </Print>
     <Tools className={`${showTools?'showTools':'hideTools'}`}>
@@ -204,13 +204,23 @@ const Print = styled.div`
 const Wrapper = styled.div`
   position: fixed;
   top:0px;left:0px;right:0px;bottom:0px;
-  background-color: ${props => props.theme.tertiary};
-  overflow-y: hidden;
+  background-color: ${props => props.theme.secondary};
+  overflow-y: auto;
   overflow-x: auto;
   max-width:100%;
   max-height:100%;
 
-
+  ::-webkit-scrollbar {
+      height: 18px;
+  }
+  ::-webkit-scrollbar-track {
+      background-color: ${props => props.theme.highlight};
+      
+  }
+  ::-webkit-scrollbar-thumb {
+      background-color: ${props => props.theme.neutral};
+      border-radius: 10px;
+  }
 `
 const Tools = styled.div`
   background-color: ${props => props.theme.highlight};
